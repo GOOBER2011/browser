@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vercel Web Browser</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #0f172a;
+      color: #fff;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+    .btn {
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #475569; }
+    .url-form {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+    }
+    .url-input {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #38bdf8;
+      font-size: 14px;
+      outline: none;
+    }
+    .url-input:focus { border-color: #38bdf8; }
+    .shortcuts {
+      display: flex;
+      gap: 8px;
+      padding: 6px 16px;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      font-size: 12px;
+      align-items: center;
+    }
+    .chip {
+      color: #94a3b8;
+      text-decoration: none;
+      background: #1e293b;
+      padding: 3px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .chip:hover { color: #fff; background: #334155; }
+    .viewport {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <button class="btn" onclick="goHome()">🏠 Home</button>
+    <button class="btn" onclick="reloadFrame()">🔄 Refresh</button>
+    
+    <form class="url-form" id="browser-form" onsubmit="navigate(event)">
+      <input type="text" id="url-bar" class="url-input" placeholder="Enter URL (e.g. wikipedia.org or https://news.ycombinator.com)" />
+      <button type="submit" class="btn" style="background: #0284c7;">Go</button>
+    </form>
+  </div>
+
+  <div class="shortcuts">
+    <span>Quick Links:</span>
+    <span class="chip" onclick="loadUrl('https://example.com')">Example</span>
+    <span class="chip" onclick="loadUrl('https://news.ycombinator.com')">Hacker News</span>
+    <span class="chip" onclick="loadUrl('https://en.m.wikipedia.org')">Wikipedia</span>
+  </div>
+
+  <div class="viewport">
+    <iframe id="content-frame" src="about:blank"></iframe>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('content-frame');
+    const urlBar = document.getElementById('url-bar');
+
+    function loadUrl(url) {
+      urlBar.value = url;
+      iframe.src = `/api/proxy?url=${encodeURIComponent(url)}`;
+    }
+
+    function navigate(e) {
+      e.preventDefault();
+      let inputUrl = urlBar.value.trim();
+      if (!inputUrl) return;
+      loadUrl(inputUrl);
+    }
+
+    function goHome() {
+      loadUrl('https://example.com');
+    }
+
+    function reloadFrame() {
+      if (iframe.src && iframe.src !== 'about:blank') {
+        iframe.src = iframe.src;
+      }
+    }
+
+    goHome();
+  </script>
+</body>
+</html>
