@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   const { url } = req.query;
 
   if (!url) {
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     if (contentType.includes("text/html")) {
       let html = await response.text();
 
-      // Inject base tag so relative links and assets load correctly
+      // Inject base tag so relative links and images resolve correctly
       const baseTag = `<base href="${targetUrl}">`;
       if (html.includes("<head>")) {
         html = html.replace("<head>", `<head>${baseTag}`);
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         html = baseTag + html;
       }
 
-      // Strip meta CSP tags that might attempt frame-busting inside the browser
+      // Remove meta CSP tags blocking iframe rendering
       html = html.replace(
         /<meta[^>]*http-equiv=["']?content-security-policy["']?[^>]*>/gi,
         ""
@@ -52,4 +52,4 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).send("Proxy Error: " + err.message);
   }
-}
+};
