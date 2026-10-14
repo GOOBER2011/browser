@@ -108,6 +108,12 @@
     const iframe = document.getElementById('content-frame');
     const urlBar = document.getElementById('url-bar');
 
+    // Asks user for confirmation before closing or reloading the tab
+    window.addEventListener('beforeunload', (event) => {
+      event.preventDefault();
+      event.returnValue = ''; // Required by modern web browsers to trigger the exit prompt
+    });
+
     function loadUrl(url) {
       urlBar.value = url;
       iframe.src = `/api/proxy?url=${encodeURIComponent(url)}`;
